@@ -141,16 +141,27 @@ def take_test_data(data):
 
 def validation_data_test (training_data,validation_data,k):
     nearest_neighbors=list()
-    counter_correct_assign=0
+    assign_list=list()
+    assign_list=[[0 for i in range(3)] for j in range(len(validation_data))] #make 3 columns and X rows (in this data - 20)
+    #print(assign_list)
     for row in range (len(validation_data)):
         nearest_neighbors=get_list_of_neighbors(training_data,validation_data[row],k)
         final_group=choose_final_group_for_test_sample(nearest_neighbors)
-        if final_group==validation_data[row][4]:
-            counter_correct_assign += 1
-            #print("Poprawnie przydzielono probke nr:",row)
-    #print (counter_correct_assign)
-    return counter_correct_assign
 
+        #take data to assing_list [[IS_ASSIGNED_OK?][REAL_GROUP][CHOSED_GROUP]];[[][][]];...
+        if final_group==validation_data[row][4]:
+            assign_list[row][0] = 1
+        else:
+            assign_list[row][0] = 0
+
+        assign_list[row][1]=validation_data[row][4]
+        assign_list[row][2]=final_group
+            #print("Poprawnie przydzielono probke nr:",row)
+    #print (assign_list)
+    #print(sum(row[0] for row in assign_list))
+    return assign_list
+
+#def true_false_matrix(list):
 
 
 def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
@@ -189,6 +200,7 @@ def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
     # If K autofind is OFF (0)
     else:
         result=(validation_data_test(training_data,validation_data,k))
+        true_false_matrix(result)
         print("numbers of correct validations=",result)
 
 
@@ -199,8 +211,8 @@ def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
 k=5
 file_name="iris.csv"
 ##### fuseBits
-auto_find_k=1 # AUTOFIND BEST K - 0-OFF, 1-ON
-randomize_data=1 # SHUFFLE DATA - 0-OFF, 1-ON
+auto_find_k=0 # AUTOFIND BEST K - 0-OFF, 1-ON
+randomize_data=0 # SHUFFLE DATA - 0-OFF, 1-ON
 
 k_nearest_neighbors(file_name,k,auto_find_k,randomize_data)
 
