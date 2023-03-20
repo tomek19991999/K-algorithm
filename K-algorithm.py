@@ -142,7 +142,7 @@ def take_test_data(data):
 def validation_data_test (training_data,validation_data,k):
     nearest_neighbors=list()
     assign_list=list()
-    assign_list=[[0 for i in range(3)] for j in range(len(validation_data))] #make 3 columns and X rows (in this data - 20)
+    assign_list=[[0 for i in range(3)] for j in range(len(validation_data))] #make 3 columns and X rows (in this data - 20) - [[IS_ASSIGNED_OK?][REAL_GROUP][CHOSED_GROUP]];
     #print(assign_list)
     for row in range (len(validation_data)):
         nearest_neighbors=get_list_of_neighbors(training_data,validation_data[row],k)
@@ -161,7 +161,30 @@ def validation_data_test (training_data,validation_data,k):
     #print(sum(row[0] for row in assign_list))
     return assign_list
 
-#def true_false_matrix(list):
+def test_data_test (training_data,test_data,k):
+    nearest_neighbors=list()
+    print(test_data)
+    for row in range (len(test_data)):
+        nearest_neighbors=get_list_of_neighbors(training_data,test_data[row],k)
+        final_group=choose_final_group_for_test_sample(nearest_neighbors)
+        print("final group for test sample nb.",row+1,", is:",final_group)
+
+def true_positive_false_positive_confusion_matrix(result,iris_name):
+    matrix=list()
+    matrix=[[0 for i in range(2)] for j in range(2)]
+    print ("\nFor: ",iris_name, "\nTP|FP\n-----\nFN|TN")
+    #print ("TP|FP\n---\nFN|TN")
+    for row in range(len(result)): #[[IS_ASSIGNED_OK?][REAL_GROUP][CHOSED_GROUP]];[[][][]];...
+        if result[row][1]==iris_name and result[row][2]==iris_name:
+            matrix[0][0]+=1 #tp_counter
+        elif result[row][1]!=iris_name and result[row][2]==iris_name:
+            matrix[0][1]+=1 #fp_counter
+        elif result[row][1]==iris_name and result[row][2]!=iris_name:
+            matrix[1][0]+=1 #fn_counter
+        elif result[row][1]!=iris_name and result[row][2]!=iris_name:
+            matrix[1][1]+=1 #tn_counter
+    print("\n",matrix[0][0],"|",matrix[0][1],"\n-------\n",matrix[1][0],"|",matrix[1][1])
+
 
 
 def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
@@ -192,57 +215,34 @@ def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
         
         for i in range (1,len(training_data)):
             result=validation_data_test(training_data,validation_data,i) #return number of correct validations
-            if max_result<result:
-                max_result=result
+            if max_result<(sum(row[0] for row in result)):
+                max_result=sum(row[0] for row in result)
                 k_result=i
-        print ("max wynik:",max_result, "przy k=",k_result)
+        k=k_result
+        result=(validation_data_test(training_data,validation_data,k))
+        true_positive_false_positive_confusion_matrix(result,"Iris-setosa")
+        true_positive_false_positive_confusion_matrix(result,"Iris-versicolor")
+        true_positive_false_positive_confusion_matrix(result,"Iris-virginica")
+        print("\nnumber of correct validations=",sum(row[0] for row in result), ", with k=",k,"\n")
 
     # If K autofind is OFF (0)
     else:
         result=(validation_data_test(training_data,validation_data,k))
-        true_false_matrix(result)
-        print("numbers of correct validations=",result)
+        true_positive_false_positive_confusion_matrix(result,"Iris-setosa")
+        true_positive_false_positive_confusion_matrix(result,"Iris-versicolor")
+        true_positive_false_positive_confusion_matrix(result,"Iris-virginica")
+        print("\nnumbers of correct validations=",sum(row[0] for row in result))
 
-
+    #test data
+    result=test_data_test(training_data,test_data,k)
 
 
 
 ####initialising variables
 k=5
 file_name="iris.csv"
-##### fuseBits
+##### fuse bits
 auto_find_k=0 # AUTOFIND BEST K - 0-OFF, 1-ON
 randomize_data=0 # SHUFFLE DATA - 0-OFF, 1-ON
 
 k_nearest_neighbors(file_name,k,auto_find_k,randomize_data)
-
-
-"""
-data=loading_csv(file_name)
-data = convert_to_values_from_one_to_zero(data)
-print(data)
-
-test_sample=list()
-training_data=list()
-validation_data=list()
-test_data=list()
-
-training_data=take_training_data(data)
-validation_data=take_validation_data(data)
-test_data=take_test_data(data)
-
-nearest_neighbors=get_list_of_neighbors(data,validation_data,k)
-
-test_sample.append(data[1])#USUNAC Z TEJ TESTOWEJ PROBKI NAZWE GRUPY
-#test_sample=[5.0, 4.0, 2.0, 0.5, 'Iris-setosa']
-training_data=take_training_data(data)
-print("TEST SAMPLE: ",test_sample[0])
-data = convert_to_values_from_one_to_zero(data)
-test_sample=convert_to_values_from_one_to_zero(test_sample)
-print("TEST SAMPLE2: ",test_sample)
-#test_sample=[0.6, 0.2, 0.13, 0.72, 'Iris-setosa']
-nearest_neighbors=get_list_of_neighbors(data,test_sample,k)
-#print(nearest_neighbors)
-final_group=choose_final_group_for_test_sample(nearest_neighbors)
-print(final_group)
-"""
