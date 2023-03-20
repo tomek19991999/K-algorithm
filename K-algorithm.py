@@ -1,5 +1,6 @@
 from csv import reader
 from math import sqrt
+import random
 from collections import Counter
 
 #Loading from CSV file
@@ -152,11 +153,16 @@ def validation_data_test (training_data,validation_data,k):
 
 
 
-def k_nearest_neighbors(file_name,k,auto_find_k):
+def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
 
 
     data=loading_csv(file_name)
     data = convert_to_values_from_one_to_zero(data)
+
+    # If randomize bit is ON
+    if randomize_data==1:
+        random.shuffle(data)
+
 
     training_data=list()
     validation_data=list()
@@ -166,7 +172,7 @@ def k_nearest_neighbors(file_name,k,auto_find_k):
     validation_data=take_validation_data(data)
     test_data=take_test_data(data)
     #training_data.append(validation_data[0]) #test
-
+    
     # If K autofind is ON (1)
     if auto_find_k==1:
         max_result=0 #max output validation data test funcion (how many samples is assigned correctly)
@@ -185,17 +191,18 @@ def k_nearest_neighbors(file_name,k,auto_find_k):
         result=(validation_data_test(training_data,validation_data,k))
         print("numbers of correct validations=",result)
 
-    
+
 
 
 
 ####initialising variables
 k=5
 file_name="iris.csv"
-##### fuseBit autofind best K
-auto_find_k=1 # 0-OFF, 1-ON
+##### fuseBits
+auto_find_k=1 # AUTOFIND BEST K - 0-OFF, 1-ON
+randomize_data=1 # SHUFFLE DATA - 0-OFF, 1-ON
 
-k_nearest_neighbors(file_name,k,auto_find_k)
+k_nearest_neighbors(file_name,k,auto_find_k,randomize_data)
 
 
 """
