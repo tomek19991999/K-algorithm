@@ -19,7 +19,7 @@ def loading_csv (file):
             row[i]=float(row[i])
             #print(row[i])
     return data
-    
+
 
 #Data visualization
 def data_visualisation():
@@ -163,7 +163,7 @@ def validation_data_test (training_data,validation_data,k):
 
 def test_data_test (training_data,test_data,k):
     nearest_neighbors=list()
-    print(test_data)
+    #print(test_data)
     for row in range (len(test_data)):
         nearest_neighbors=get_list_of_neighbors(training_data,test_data[row],k)
         final_group=choose_final_group_for_test_sample(nearest_neighbors)
@@ -231,7 +231,7 @@ def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
         true_positive_false_positive_confusion_matrix(result,"Iris-setosa")
         true_positive_false_positive_confusion_matrix(result,"Iris-versicolor")
         true_positive_false_positive_confusion_matrix(result,"Iris-virginica")
-        print("\nnumbers of correct validations=",sum(row[0] for row in result))
+        print("\nnumbers of correct validations=",sum(row[0] for row in result), "\n")
 
     #test data
     result=test_data_test(training_data,test_data,k)
@@ -241,8 +241,10 @@ def k_nearest_neighbors(file_name,k,auto_find_k,randomize_data):
 ####initialising variables
 k=5
 file_name="iris.csv"
-##### fuse bits
+##### flags
 auto_find_k=0 # AUTOFIND BEST K - 0-OFF, 1-ON
 randomize_data=0 # SHUFFLE DATA - 0-OFF, 1-ON
 
 k_nearest_neighbors(file_name,k,auto_find_k,randomize_data)
+
+
